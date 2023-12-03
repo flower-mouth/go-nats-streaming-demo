@@ -10,7 +10,6 @@ import (
 	"wbLab0/internal/models"
 )
 
-// .\nats-streaming-server -cid prod -store file -dir store
 func main() {
 	fmt.Printf("publisher started\n")
 	sc, _ := stan.Connect("prod", "simple-pub")
@@ -69,12 +68,12 @@ func main() {
 		OofShred:          "1",
 	}
 
-	for i := 10; ; i++ {
+	for i := 100; ; i++ {
 
 		order.OrderUID = strconv.Itoa(i)            // create unique identifier
 		order.Payment.Transaction = strconv.Itoa(i) // create unique identifier
 		order.Items[0].Price = int64(100 + i)       // create unique identifier
-		order.Payment.Amount = int64(i * i * 10)
+		order.Payment.Amount = int64(i * 10)
 		order.Delivery.Address = "Griboedov St " + strconv.Itoa(i+10)
 		record, _ := json.Marshal(order)
 
