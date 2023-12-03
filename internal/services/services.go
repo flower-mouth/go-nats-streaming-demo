@@ -1,14 +1,29 @@
 package services
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	stan "github.com/nats-io/stan.go"
+	"log"
 	"sync"
+	"wbLab0/internal/configuration"
 	"wbLab0/internal/database"
 	"wbLab0/internal/models"
 )
 
-func Subscriber(postgreSQLClient database.Client) {
+func unmarshalMessage(m []byte) (models.Order, error) {
+	var order models.Order
+
+	err := json.Unmarshal(m, &order)
+	if err != nil {
+		return models.Order{}, err
+	}
+
+	return order, nil
+}
+
+func Subscriber() {
 	fmt.Printf("subscriber started\n")
 
 	sc, _ := stan.Connect("prod", "sub-1")
@@ -16,15 +31,23 @@ func Subscriber(postgreSQLClient database.Client) {
 
 	fmt.Printf("subscriber connected\n")
 
-	sc.Subscribe("Test3", func(m *stan.Msg) {
-		fmt.Printf("Got: %v \n\n", string(m.Data))
-		testtt := models.IntTest{m.Data}
-
-		err := database.AddMessageToDatabase(postgreSQLClient, testtt) // add to database
+	_, err := sc.Subscribe("Test4", func(m *stan.Msg) {
+		order, err := unmarshalMessage(m.Data)
 		if err != nil {
-			fmt.Printf("%v", err)
+			log.Printf("Marshaling failed (incorrect message type): %v\n", err)
+		} else {
+			err = database.AddMessageToDatabase(database.NewClient(context.Background(), 3, configuration.StorageConfig), order)
+			fmt.Printf("Stored in database\n")
+			if err != nil {
+				log.Print(err)
+			} else {
+				models.Cache[order.OrderUID] = order
+			}
 		}
 	})
+	if err != nil {
+		log.Printf("Error in subscription: %v\n", err)
+	}
 
 	w := sync.WaitGroup{}
 	w.Add(1)
