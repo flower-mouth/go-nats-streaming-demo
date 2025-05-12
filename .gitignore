@@ -1,1 +1,24 @@
-Режим вывода команд на экран (ECHO) включен.
+# Compiled Go binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Exception for nats-streaming-server.exe
+!nats-streaming-server.exe
+
+# NATS Streaming storage directory
+store/
+
+# Log and temporary files
+*.log
+*.tmp
+
+# IDE configuration directories
+.vscode/
+.idea/
+
+# System files
+.DS_Store
+Thumbs.db
