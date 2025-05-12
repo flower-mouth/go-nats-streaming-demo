@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	stan "github.com/nats-io/stan.go"
+	"go-nats-streaming-demo/internal/configuration"
+	"go-nats-streaming-demo/internal/database"
+	"go-nats-streaming-demo/internal/models"
 	"log"
 	"sync"
-	"wbLab0/internal/configuration"
-	"wbLab0/internal/database"
-	"wbLab0/internal/models"
 )
 
 func unmarshalMessage(m []byte) (models.Order, error) {
@@ -26,12 +26,17 @@ func unmarshalMessage(m []byte) (models.Order, error) {
 func Subscriber() {
 	fmt.Printf("subscriber started\n")
 
-	sc, _ := stan.Connect("prod", "sub-1")
-	defer sc.Close()
+	sc, err := stan.Connect("prod", "sub-1")
+	if err != nil {
+		log.Fatalf("Ошибка подключения к NATS Streaming: %v", err)
+	}
+	if sc != nil {
+		defer sc.Close()
+	}
 
 	fmt.Printf("subscriber connected\n")
 
-	_, err := sc.Subscribe("Test4", func(m *stan.Msg) {
+	_, err = sc.Subscribe("Test4", func(m *stan.Msg) {
 		order, err := unmarshalMessage(m.Data)
 		if err != nil {
 			log.Printf("Marshaling failed (incorrect message type): %v\n", err)

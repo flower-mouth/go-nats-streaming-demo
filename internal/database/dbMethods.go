@@ -5,10 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/jackc/pgx/v5"
+	"go-nats-streaming-demo/internal/configuration"
+	"go-nats-streaming-demo/internal/models"
 	"log"
 	"time"
-	"wbLab0/internal/configuration"
-	"wbLab0/internal/models"
 )
 
 type Client interface {

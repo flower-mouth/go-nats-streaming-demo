@@ -2,10 +2,10 @@ package router
 
 import (
 	"encoding/json"
+	"go-nats-streaming-demo/internal/models"
 	"html/template"
 	"log"
 	"net/http"
-	"wbLab0/internal/models"
 )
 
 func HomePage(w http.ResponseWriter, r *http.Request) {

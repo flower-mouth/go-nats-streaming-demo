@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
+	"go-nats-streaming-demo/internal/configuration"
+	"go-nats-streaming-demo/internal/database"
+	"go-nats-streaming-demo/internal/services"
+	"go-nats-streaming-demo/router"
 	"log"
 	"net/http"
-	"wbLab0/internal/configuration"
-	"wbLab0/internal/database"
-	"wbLab0/internal/services"
-	"wbLab0/router"
 )
 
 func main() {

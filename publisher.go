@@ -4,15 +4,23 @@ import (
 	"encoding/json"
 	"fmt"
 	stan "github.com/nats-io/stan.go"
+	"go-nats-streaming-demo/internal/models"
 	"log"
 	"strconv"
 	"time"
-	"wbLab0/internal/models"
 )
 
 func main() {
 	fmt.Printf("publisher started\n")
-	sc, _ := stan.Connect("prod", "simple-pub")
+
+	sc, err := stan.Connect(
+		"prod",
+		"simple-pub",
+		stan.NatsURL("nats://localhost:4222"),
+	)
+	if err != nil {
+		log.Fatalf("Ошибка подключения к NATS Streaming: %v", err)
+	}
 	defer sc.Close()
 
 	item := models.Items{
@@ -68,7 +76,7 @@ func main() {
 		OofShred:          "1",
 	}
 
-	for i := 100; ; i++ {
+	for i := 400; ; i++ {
 
 		order.OrderUID = strconv.Itoa(i)            // create unique identifier
 		order.Payment.Transaction = strconv.Itoa(i) // create unique identifier

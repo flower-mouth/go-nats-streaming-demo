@@ -1,4 +1,4 @@
-module wbLab0
+module go-nats-streaming-demo
 
 go 1.21.1
 
